@@ -59,7 +59,8 @@ console.log("Loaded CHAT_SECRET_KEY:", process.env.CHAT_SECRET_KEY);
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
   cors: {
-    origin: [import.meta.env.VITE_FRONTEND_URL,
+    origin: [process.env.VITE_FRONTEND_URL,
+      "https://campus-cupid-frontend.vercel.app",
       "http://localhost:5173",], // ⚠️ adjust if frontend runs elsewhere
     methods: ["GET", "POST"],
     credentials: true,
