@@ -59,7 +59,8 @@ console.log("Loaded CHAT_SECRET_KEY:", process.env.CHAT_SECRET_KEY);
 const httpServer = createServer(app);
 export const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173", // ⚠️ adjust if frontend runs elsewhere
+    origin: [import.meta.env.VITE_FRONTEND_URL,
+      "http://localhost:5173",], // ⚠️ adjust if frontend runs elsewhere
     methods: ["GET", "POST"],
     credentials: true,
   },
