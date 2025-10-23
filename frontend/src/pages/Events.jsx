@@ -17,13 +17,31 @@ const Events = ({ searchQuery }) => {
     fetchEvents();
   }, []);
 
-  // ✅ Use searchQuery from Layout
+  // ✅ Add this function
+  const handleJoin = async (eventId) => {
+    try {
+      const res = await API.post(`/events/${eventId}/join`);
+;
+      console.log("Joined event:", res.data);
+
+      // ✅ Update joined state locally
+      setEvents((prev) =>
+        prev.map((e) =>
+          e._id === eventId ? { ...e, joined: true, loungeId: res.data.loungeId } : e
+        )
+      );
+    } catch (err) {
+      console.error("Error joining event:", err);
+    }
+  };
+
+  // ✅ Use searchQuery safely
   const filteredEvents = events.filter((event) => {
     const title = event.title?.toLowerCase() || "";
     const desc = event.description?.toLowerCase() || "";
     return (
-      title.includes(searchQuery.toLowerCase()) ||
-      desc.includes(searchQuery.toLowerCase())
+      title.includes(searchQuery?.toLowerCase() || "") ||
+      desc.includes(searchQuery?.toLowerCase() || "")
     );
   });
 
@@ -35,7 +53,8 @@ const Events = ({ searchQuery }) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredEvents.map((event) => (
-            <EventCard key={event._id} event={event} />
+            // ✅ Pass handleJoin here
+            <EventCard key={event._id} event={event} onJoin={handleJoin} />
           ))}
         </div>
       )}

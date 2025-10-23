@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import API from "../utils/api";
+import MiniSpotlightCard from "../components/MiniSpotlightCard";
 
 // ✅ Flip Card Component
 const FlipCard = ({ front, back }) => {
@@ -173,6 +174,7 @@ const Dashboard = () => {
   const [voted, setVoted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("Explorer");
+  const [spotlight, setSpotlight] = useState(null); // ✅ Add this
 
   const navigate = useNavigate();
 
@@ -213,16 +215,18 @@ if (storedUser) {
 
     const fetchAll = async () => {
       try {
-        const [postsRes, eventsRes, commRes, pollRes] = await Promise.all([
+        const [postsRes, eventsRes, commRes, pollRes, spotRes] = await Promise.all([
           API.get("/explore"),
           API.get("/events"),
           API.get("/communities"),
           API.get("/polls"),
+          API.get("/dating/spotlight"),
         ]);
         setPosts(postsRes.data.slice(0, 3));
         setEvents(eventsRes.data.slice(0, 3));
         setCommunities(commRes.data.slice(0, 4));
         setPoll(pollRes.data);
+        setSpotlight(spotRes.data.spotlight || null);
       } catch (err) {
         console.error(err);
       } finally {
@@ -323,14 +327,16 @@ if (storedUser) {
         {/* ✅ RIGHT SIDEBAR */}
         <aside className="lg:col-span-4 space-y-4">
           {/* Spotlight */}
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="text-sm font-semibold mb-2 text-gray-700">
-              🌟 Today's Spotlight
-            </h3>
-            <p className="text-gray-500 text-sm text-center">
-              No spotlight yet
-            </p>
-          </div>
+          {/* 🌟 Spotlight */}
+<div className="mb-4">
+  {spotlight ? (
+    <MiniSpotlightCard spotlight={spotlight} />
+  ) : (
+    <p className="text-gray-500 text-sm text-center">No spotlight yet</p>
+  )}
+</div>
+
+
 
           {/* Top Communities */}
           <div>

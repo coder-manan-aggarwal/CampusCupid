@@ -103,3 +103,15 @@ export const getLoungeMessages = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+export const getLoungeById = async (req, res) => {
+  try {
+    const lounge = await Lounge.findById(req.params.loungeId);
+    if (!lounge)
+      return res.status(404).json({ message: "Lounge not found" });
+
+    res.json(lounge);
+  } catch (err) {
+    console.error("Get lounge by ID error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

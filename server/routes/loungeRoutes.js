@@ -5,10 +5,11 @@ import {
   leaveLounge,
   sendLoungeMessage,
   getLoungeMessages,
+  getLoungeById, 
 } from "../controllers/loungeController.js";
 
 const router = express.Router();
-
+router.get("/:loungeId", authMiddleware, getLoungeById);
 // Join or leave a lounge
 router.post("/:loungeId/join", authMiddleware, joinLounge);
 router.post("/:loungeId/leave", authMiddleware, leaveLounge);

@@ -134,9 +134,9 @@ export default function App() {
           path="/lounges/:id"
           element={
             <ProtectedRoute>
-              <Layout navbarVariant="lounges">
+              
                 <LoungeChat />
-              </Layout>
+           
             </ProtectedRoute>
           }
         />
