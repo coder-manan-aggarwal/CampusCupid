@@ -284,28 +284,59 @@ if (storedUser) {
           </div>
 
           {/* ✅ Trending Posts */}
-          <div>
-            <h2 className="text-lg font-semibold mb-3 text-gray-700">
-              Trending Posts
-            </h2>
-            {loading ? (
-              <p className="text-gray-500">Loading...</p>
-            ) : posts.length === 0 ? (
-              <p className="text-gray-500">No posts yet</p>
-            ) : (
-              <div className="space-y-3">
-                {posts.map((p) => (
-                  <div
-                    key={p._id}
-                    className="bg-white p-4 rounded-xl shadow hover:shadow-md transition"
-                  >
-                    <h3 className="font-semibold">{p.author?.name || "User"}</h3>
-                    <p className="text-sm text-gray-700">{p.content}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+         {/* ✅ Trending Posts */}
+<div>
+  <h2 className="text-lg font-semibold mb-3 text-gray-700">Trending Posts</h2>
+
+  {loading ? (
+    <p className="text-gray-500">Loading...</p>
+  ) : posts.length === 0 ? (
+    <p className="text-gray-500">No posts yet</p>
+  ) : (
+    <div className="space-y-3">
+      {posts.map((p) => (
+        <div
+          key={p._id}
+          onClick={() => navigate("/explore")}
+          className="bg-white p-4 rounded-xl shadow hover:shadow-md transition cursor-pointer flex items-start gap-3"
+        >
+          {/* ✅ User Avatar & Name */}
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/user/${p.author?._id}`);
+            }}
+            className="flex items-center gap-3 cursor-pointer"
+          >
+            <img
+              src={
+                p.author?.profile?.profilePic ||
+                p.author?.profilePic ||
+                "/default-avatar.png"
+              }
+              alt={p.author?.name || "User"}
+              className="w-10 h-10 rounded-full object-cover border border-gray-200 hover:scale-105 transition"
+            />
           </div>
+
+          <div className="flex-1">
+            <h3
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/user/${p.author?._id}`);
+              }}
+              className="font-semibold text-gray-800 hover:text-indigo-600 cursor-pointer"
+            >
+              {p.author?.name || "User"}
+            </h3>
+            <p className="text-sm text-gray-700 mt-1">{p.content}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
           {/* ✅ Upcoming Events */}
           <div>
