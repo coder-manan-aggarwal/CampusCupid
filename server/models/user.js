@@ -7,7 +7,10 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     college: { type: String, required: true },
     role: { type: String, enum: ["user", "admin"], default: "user" },
-
+    isVerified: {
+  type: Boolean,
+  default: true   // ⭐ IMPORTANT → existing users auto verified
+},
     profile: {
       gender: String,
       dob: String,

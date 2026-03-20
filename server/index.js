@@ -27,7 +27,7 @@ import matchSearchRoutes from "./routes/matchSearchRoutes.js";
 import askoutSearchRoutes from "./routes/askoutSearchRoutes.js";
 import confessionSearchRoutes from "./routes/confessionSearchRoutes.js";
 
-
+import { sendOtpMail } from "./utils/sendOtpMail.js";
 
 // ------------------- Express Setup -------------------
 const app = express();
@@ -123,6 +123,10 @@ io.on("connection", (socket) => {
     io.to(msg.matchId).emit("receivePrivateMessage", msg);
   });
 });
+// app.get("/test-mail", async (req, res) => {
+//   await sendOtpMail("aggarwalmanan8@gmail.com", "123456");
+//   res.send("Mail sent");
+// });
 
 // ------------------- Start Server -------------------
 connectDB().then(() => {

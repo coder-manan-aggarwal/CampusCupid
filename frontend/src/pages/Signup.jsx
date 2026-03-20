@@ -8,12 +8,18 @@ import { useState } from "react";
 import loginImage from "../assets/logincopy.png";
 import logo from "../assets/logo.png";
 import { Eye, EyeOff } from "lucide-react"; // ✅ for eye icons
-
+import { useNavigate } from "react-router-dom";
 // ✅ Validation schema
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().min(6, "At least 6 characters").required("Password is required"),
+ password: yup
+  .string()
+  .matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
+    "Password must be strong"
+  )
+  .required("Password is required"),
   college: yup.string().required("College name is required"),
 });
 
@@ -21,7 +27,7 @@ export default function Signup() {
   const { signup } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // ✅ show/hide password state
-
+   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -34,6 +40,8 @@ export default function Signup() {
     try {
       setLoading(true);
       await signup(data);
+      localStorage.setItem("signupEmail", data.email);
+      navigate("/verify-otp");
     } catch (error) {
       console.error("Signup failed:", error);
     } finally {

@@ -2,6 +2,11 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import cloudinary from "../config/cloudinary.js"; // already set up
 import jwt from "jsonwebtoken";
+import SignupOTP from "../models/signupOtp.js";
+import { strongPassword } from "../middleware/strongPassword.js";
+import { validCollegeEmail } from "../middleware/validCollegeEmail.js";
+import { sendOtpMail } from "../utils/sendOtpMail.js";
+
 const signToken = (user) =>
   jwt.sign(
     { id: user._id, role: user.role }, // 👈 include role
@@ -10,31 +15,65 @@ const signToken = (user) =>
   );
 
 // ✅ Signup
+// export const signup = async (req, res) => {
+//   try {
+//     const { name, email, password, college } = req.body;
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) return res.status(400).json({ message: "User already exists" });
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = await User.create({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       college,
+//       role: "user", // default role
+//     });
+
+//     const token = signToken(newUser);
+//     // don't send password back
+//     const safeUser = newUser.toObject();
+//     delete safeUser.password;
+
+//     res.status(201).json({ message: "User registered", user: safeUser, token });
+//   } catch (error) {
+//     res.status(500).json({ message: "Signup failed", error: error.message });
+//   }
+// };
 export const signup = async (req, res) => {
   try {
     const { name, email, password, college } = req.body;
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    console.log("Existing user:", existingUser);
+    if (existingUser)
+      return res.status(400).json({ message: "User already exists" });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    if (!validCollegeEmail(email))
+      return res.status(400).json({ message: "Use NITJ college email" });
 
-    const newUser = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      college,
-      role: "user", // default role
-    });
+    if (!strongPassword(password))
+      return res.status(400).json({ message: "Weak password" });
 
-    const token = signToken(newUser);
-    // don't send password back
-    const safeUser = newUser.toObject();
-    delete safeUser.password;
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    res.status(201).json({ message: "User registered", user: safeUser, token });
-  } catch (error) {
-    res.status(500).json({ message: "Signup failed", error: error.message });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
+
+    await SignupOTP.findOneAndUpdate(
+      { email },
+      { name, email, password: hashedPassword, college, otp, otpExpiry },
+      { upsert: true, new: true }
+    );
+
+    await sendOtpMail(email, otp);
+
+    res.json({ message: "OTP sent to college email" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -42,10 +81,11 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
+   
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found" });
-
+  if (!user.isVerified)
+  return res.status(403).json({ message: "Verify your email first" });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
@@ -128,3 +168,43 @@ export const completeProfile = async (req, res) => {
   }
 };
 
+export const verifySignupOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    const record = await SignupOTP.findOne({ email });
+
+    if (!record)
+      return res.status(400).json({ message: "No signup request found" });
+
+    if (record.otp !== otp)
+      return res.status(400).json({ message: "Invalid OTP" });
+
+    if (record.otpExpiry < Date.now())
+      return res.status(400).json({ message: "OTP expired" });
+
+    const newUser = await User.create({
+      name: record.name,
+      email: record.email,
+      password: record.password,
+      college: record.college,
+      role: "user",
+      isVerified: true
+    });
+
+    await SignupOTP.deleteOne({ email });
+
+    const token = signToken(newUser);
+
+    const safeUser = newUser.toObject();
+    delete safeUser.password;
+
+    res.json({
+      message: "Signup successful",
+      user: safeUser,
+      token
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

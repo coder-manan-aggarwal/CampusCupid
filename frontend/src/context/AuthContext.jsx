@@ -70,19 +70,31 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Signup
-  const signup = async (data) => {
-    try {
-      const res = await API.post("/auth/signup", data);
-      const { user: resUser, token } = res.data;
-      setUser(resUser);
-      writeUserToStorage(resUser, token);
-      navigate("/onboarding");
-    } catch (err) {
-      console.error("Signup failed:", err.response?.data || err.message);
-      throw err;
-    }
-  };
+  // const signup = async (data) => {
+  //   try {
+  //     const res = await API.post("/auth/signup", data);
+  //     const { user: resUser, token } = res.data;
+  //     setUser(resUser);
+  //     writeUserToStorage(resUser, token);
+  //     navigate("/onboarding");
+  //   } catch (err) {
+  //     console.error("Signup failed:", err.response?.data || err.message);
+  //     throw err;
+  //   }
+  // };
+const signup = async (data) => {
+  try {
+    const res = await API.post("/auth/signup", data);
 
+    // ⭐ just store email for OTP screen
+    localStorage.setItem("signupEmail", data.email);
+
+    return res.data; // return message
+  } catch (err) {
+    console.error("Signup failed:", err.response?.data || err.message);
+    throw err;
+  }
+};
   // Login
   const login = async (data) => {
     try {
