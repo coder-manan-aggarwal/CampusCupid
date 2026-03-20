@@ -28,6 +28,8 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // ✅ show/hide password state
    const navigate = useNavigate();
+   const [serverError, setServerError] = useState("");
+   const [toast, setToast] = useState(null);
   const {
     register,
     handleSubmit,
@@ -38,19 +40,57 @@ export default function Signup() {
 
   const onSubmit = async (data) => {
     try {
+      setServerError("");
       setLoading(true);
       await signup(data);
       localStorage.setItem("signupEmail", data.email);
       navigate("/verify-otp");
-    } catch (error) {
-      console.error("Signup failed:", error);
-    } finally {
+    }catch (error) {
+  const msg =
+    error?.response?.data?.message ||
+    "Signup failed. Please try again.";
+
+  setToast(msg);
+
+  setTimeout(() => {
+    setToast(null);
+  }, 3000);
+} finally {
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-pink-100 via-white to-purple-100">
+      {toast && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+    
+    {/* background blur */}
+    <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+
+    {/* toast card */}
+    <motion.div
+      initial={{ scale: 0.7, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ type: "spring", stiffness: 200, damping: 18 }}
+      className="relative px-8 py-6 rounded-3xl shadow-2xl
+                 bg-gradient-to-br from-pink-500 via-rose-400 to-purple-500
+                 text-white text-center max-w-sm w-[90%]"
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: [1.3, 1] }}
+        transition={{ duration: 0.4 }}
+        className="text-5xl mb-3"
+      >
+        💔
+      </motion.div>
+
+      <p className="font-semibold text-lg">{toast}</p>
+    </motion.div>
+  </div>
+)}
       {/* ===================== LEFT SIDE (Full Image Section) ===================== */}
       <div className="hidden md:flex md:w-3/5 h-screen">
         <img
@@ -61,6 +101,7 @@ export default function Signup() {
       </div>
 
       {/* ===================== RIGHT SIDE (Signup Section) ===================== */}
+      
       <div className="w-full md:w-2/5 flex items-center justify-center p-8 md:p-16 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -82,7 +123,11 @@ export default function Signup() {
               Discover like-minded students, share your journey, and find meaningful campus connections. 💕
             </p>
           </div>
-
+          {/* {serverError && (
+  <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm text-center">
+    {serverError}
+  </div>
+)} */}
           {/* Signup Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Name */}
