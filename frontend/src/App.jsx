@@ -25,7 +25,7 @@ import Layout from "./components/Layout";  // ✅ central Layout
 import UserProfile from "./pages/UserProfile";
 import CommunityDetails from "./pages/CommunityDetails";
 import CommunityPage from "./pages/CommunityPage";
-import VerifyOtp from "./pages/verifyOtp";
+import VerifyOtp from "./pages/VerifyOtp";
 export default function App() {
   return (
     <div className="min-h-screen">
