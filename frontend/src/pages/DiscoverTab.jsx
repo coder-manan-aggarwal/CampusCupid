@@ -7,6 +7,7 @@ const DiscoverTab = ({ searchResults = [], isSearching = false }) => {
   const [spotlight, setSpotlight] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [nextReset, setNextReset] = useState(null);
 
   // ✅ Fetch default users + spotlight (only once)
   useEffect(() => {
@@ -20,6 +21,7 @@ const DiscoverTab = ({ searchResults = [], isSearching = false }) => {
         const filtered =
           usersRes.data?.filter((u) => u._id !== loggedInId) || [];
         setSpotlight(spotRes.data.spotlight || null);
+        setNextReset(spotRes.data.nextReset || null);
         setUsers(filtered);
       } catch (err) {
         console.error("Error loading Discover:", err);
@@ -67,6 +69,7 @@ const DiscoverTab = ({ searchResults = [], isSearching = false }) => {
     <div className="p-6 space-y-10">
       <SpotlightCard
         spotlight={spotlight}
+         nextReset={nextReset}
         onAskOut={handleAskOut}
         onSecretCrush={handleCrush}
       />

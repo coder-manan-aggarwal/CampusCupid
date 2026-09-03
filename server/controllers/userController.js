@@ -1,6 +1,6 @@
 import User from "../models/user.js";
 
-// ✅ Get all users (admin only)
+
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.find().select(

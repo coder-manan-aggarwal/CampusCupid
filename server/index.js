@@ -53,7 +53,7 @@ app.use("/api/dating/matches", matchSearchRoutes);
 app.use("/api/dating/askouts", askoutSearchRoutes);
 app.use("/api/dating/confession", confessionSearchRoutes);
 app.use("/api/campus-updates", campusUpdateRoutes);
-console.log("Loaded CHAT_SECRET_KEY:", process.env.CHAT_SECRET_KEY);
+
 
 // ------------------- Socket.io Setup -------------------
 const httpServer = createServer(app);

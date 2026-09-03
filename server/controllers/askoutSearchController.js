@@ -2,21 +2,25 @@ import Askout from "../models/AskOut.js";
 
 export const searchAskouts = async (req, res) => {
   try {
-    const q = req.query.q?.trim() || "";
-    const userId = req.user._id;
+    const q = (req.query.q || "").trim().toLowerCase();
+    const userId = req.user.id;
+
+   
 
     const askouts = await Askout.find({
-      $or: [{ from: userId }, { to: userId }],
+      to: userId,
+      status: "pending",
     })
-      .populate("from to", "name profile.profilePic")
+      .populate("from", "name college profile.profilePic")
       .lean();
 
+    
+
     const filtered = askouts.filter((a) =>
-      [a.from.name, a.to.name]
-        .join(" ")
-        .toLowerCase()
-        .includes(q.toLowerCase())
+      a.from?.name?.toLowerCase().includes(q)
     );
+
+    
 
     res.json(filtered);
   } catch (err) {

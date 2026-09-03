@@ -99,36 +99,44 @@ export default function App() {
         <Route
           path="/explore"
           element={
-            <Layout navbarVariant="explore">
-              <ExplorePage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout navbarVariant="explore">
+                <ExplorePage />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/messages"
           element={
-            <Layout navbarVariant="messages">
-              <MessagesPage />
-            </Layout>
+            <ProtectedRoute>
+              <Layout navbarVariant="messages">
+                <MessagesPage />
+              </Layout>
+            </ProtectedRoute>
           }
         />
        
         <Route
           path="/events"
           element={
-            <Layout navbarVariant="events">
-              <Events />
-            </Layout>
+            <ProtectedRoute>
+              <Layout navbarVariant="events">
+                <Events />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/events/:id"
           element={
-            <Layout navbarVariant="events">
-              <EventDetails />
-            </Layout>
+            <ProtectedRoute>
+              <Layout navbarVariant="events">
+                <EventDetails />
+              </Layout>
+            </ProtectedRoute>
           }
         />
 

@@ -51,6 +51,7 @@ export default function DatingPage() {
           break;
         case "askouts":
           res = await API.get(`/dating/askouts/search?q=${encodeURIComponent(trimmed)}`);
+          
           break;
         case "confessions":
           res = await API.get(`/dating/confession/search?q=${encodeURIComponent(trimmed)}`);
@@ -62,6 +63,7 @@ export default function DatingPage() {
       setSearchResults(res.data || []);
     } catch (err) {
       console.error("Search error:", err);
+
       setSearchResults([]);
     }
   };

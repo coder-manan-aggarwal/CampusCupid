@@ -9,7 +9,7 @@ import { sendOtpMail } from "../utils/sendOtpMail.js";
 
 const signToken = (user) =>
   jwt.sign(
-    { id: user._id, role: user.role }, // 👈 include role
+    { id: user._id, role: user.role },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -47,7 +47,7 @@ export const signup = async (req, res) => {
     const { name, email, password, college } = req.body;
 
     const existingUser = await User.findOne({ email });
-    console.log("Existing user:", existingUser);
+    // console.log("Existing user:", existingUser);
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
@@ -100,7 +100,6 @@ export const login = async (req, res) => {
 };
 
 // ✅ Complete Profile
-// ✅ Complete Profile (Improved for array-based interests)
 export const completeProfile = async (req, res) => {
   try {
     const userId = req.user.id; // from authMiddleware

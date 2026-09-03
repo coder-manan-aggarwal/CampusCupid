@@ -6,7 +6,7 @@ export const searchConfessions = async (req, res) => {
     if (!q) return res.json([]);
 
     const confessions = await Confession.find()
-      .populate("author", "name")
+      .populate("author", "name profile.profilePic")
       .lean();
 
     const filtered = confessions.filter(

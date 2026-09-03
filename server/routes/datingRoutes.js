@@ -29,12 +29,12 @@ import { getMyMatches ,checkIfMatched} from "../controllers/matchController.js";
 import { getSpotlightUser  } from "../controllers/spotlightController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 const router = express.Router();
-console.log("✅ datingRoutes file loaded");
+
 router.get("/ping", (req, res) => {
   res.json({ msg: "Dating API is mounted!" });
 });
 
-console.log("👉 getSpotlightUser is:", getSpotlightUser);
+
 
 
 // Spotlight endpoint
@@ -59,6 +59,6 @@ router.get("/confession/top", authMiddleware, getTopConfessions);
 router.get("/matches", authMiddleware,getMyMatches); // my matches
 router.get("/check-match/:userId", authMiddleware, checkIfMatched);
 
-console.log("👉 Registered routes:", router.stack.map(r => r.route?.path));
+
 
 export default router;

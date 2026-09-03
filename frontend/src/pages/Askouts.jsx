@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../utils/api";
 
-const AskoutsTab = ({ searchResults = [] }) => {
+const AskoutsTab = ({ searchResults = [], isSearching=false }) => {
   const [askouts, setAskouts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,15 +33,22 @@ const AskoutsTab = ({ searchResults = [] }) => {
   };
 
   // Determine which list to show — search results or default
-  const listToShow = searchResults.length > 0 ? searchResults : askouts;
+ const listToShow = isSearching ? searchResults : askouts;
 
   // 🌀 Loading state
   if (loading)
     return <p className="text-gray-500 text-center mt-6">Loading askouts...</p>;
 
   // 💔 No askouts at all
-  if (listToShow.length === 0)
-    return <p className="text-gray-400 text-center mt-6">No incoming requests 💔</p>;
+  if (listToShow.length === 0) {
+  return (
+    <p className="text-gray-400 text-center mt-6">
+      {isSearching
+        ? "No matching requests found 🔍"
+        : "No incoming requests 💔"}
+    </p>
+  );
+}
 
   // ✅ Show all askouts
   return (

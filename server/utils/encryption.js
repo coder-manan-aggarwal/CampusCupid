@@ -1,13 +1,9 @@
 import crypto from "crypto";
 
-// ⚡ Must be 32 bytes for AES-256
-console.log("⚡ encryption.js file loaded at startup");
-console.log("process.env.CHAT_SECRET_KEY (raw):", process.env.CHAT_SECRET_KEY);
 
-console.log("CHAT_SECRET_KEY:", process.env.CHAT_SECRET_KEY);
 const key = Buffer.from(process.env.CHAT_SECRET_KEY, "hex"); 
 const algorithm = "aes-256-cbc";
-console.log("Key length (bytes):",key.length);
+// console.log("Key length (bytes):",key.length);
 
 // 🔐 Encrypt text
 export const encryptText = (plainText) => {
